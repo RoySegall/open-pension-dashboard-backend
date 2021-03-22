@@ -6,6 +6,5 @@ Todo:
 * [ ] Queue - typescript
 * [ ] Mongo
 * [ ] Sockets - pusher
-* [ ] Cli - add users, view stuff
 * [ ] Email - sendgrid
 
