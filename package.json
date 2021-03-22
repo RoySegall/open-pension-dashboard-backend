@@ -9,6 +9,8 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
+    "dev": "nodemon --watch '**/*.ts' --exec 'ts-node' src/index.ts",
+    "sandbox": "nodemon --watch '**/*.ts' --exec 'ts-node' src/sandbox.ts",
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
@@ -42,9 +44,12 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@bitauth/libauth": "^1.17.1"
+    "@bitauth/libauth": "^1.17.1",
+    "apollo-server": "^2.21.2",
+    "graphql": "^15.5.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.7",
     "@ava/typescript": "^1.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
