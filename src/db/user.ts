@@ -1,8 +1,5 @@
 import {
-  BaseEntity,
-  createObject, GetEntityArguments,
-  getObject,
-  TransactionResults
+  BaseEntity, createObject, GetEntityArguments, getObject, TransactionResults
 } from './Utils';
 import mongoose from './db';
 
@@ -10,6 +7,10 @@ export type User = BaseEntity & {
   readonly username: string,
   readonly password: string,
   readonly email: string,
+  readonly createdAt?: Date,
+  readonly updatedAt?: Date,
+  readonly profilePictureStorageId?: number,
+  readonly nameToPresent?: string,
 };
 
 const userSchema = new mongoose.Schema({
@@ -17,6 +18,9 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, unique: false },
   email: { type: String, required: true, unique: true },
   createdAt: { type: Date },
+  updatedAt: { type: Date },
+  profilePictureStorageId: { type: Number },
+  nameToPresent: { type: String },
 });
 
 export const User = mongoose.model('users', userSchema);

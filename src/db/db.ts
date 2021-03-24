@@ -10,4 +10,8 @@ db.once('open', function() {
   console.log('Connecting to DB 🤘')
 });
 
+export async function dropDatabase() {
+  await db.dropDatabase();
+}
+
 export default mongoose;

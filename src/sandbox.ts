@@ -1,5 +1,8 @@
+import { createUser } from './db/user';
+
 (async () => {
-  console.log('a');
+  const res = await createUser({email: 'b', username: 'a', password: 'a'});
+  console.log(res);
 })();
 
 
