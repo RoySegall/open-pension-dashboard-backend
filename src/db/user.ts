@@ -16,7 +16,18 @@ export type User = BaseEntity & {
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true, unique: false },
-  email: { type: String, required: true, unique: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function(email) {
+        // todo: find better validation.
+        return email.includes('@');
+      },
+      message: 'The provided email is not a valid email',
+    },
+  },
   createdAt: { type: Date },
   updatedAt: { type: Date },
   profilePictureStorageId: { type: Number },

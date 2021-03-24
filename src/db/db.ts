@@ -11,7 +11,7 @@ db.once('open', function() {
 });
 
 export async function dropDatabase() {
-  await db.dropDatabase();
+  return await db.dropDatabase();
 }
 
 export default mongoose;

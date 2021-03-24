@@ -1,7 +1,7 @@
 process.env.dbURL = 'mongodb://127.0.0.1/test';
 
-import { dropDatabase } from '../db/db';
+import { User } from '../db/user';
 
 beforeEach(async () => {
-  await dropDatabase();
+  await User.deleteMany({});
 });
