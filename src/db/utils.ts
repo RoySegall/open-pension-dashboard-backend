@@ -24,6 +24,11 @@ export type GetEntityArguments = {
   readonly conditions?: Conditions;
 };
 
+/**
+ * Convert an error object to key value.
+ *
+ * @param errors - The error object for un-passed validations.
+ */
 export function convertErrorToObject(errors) {
   if (isEmpty(errors)) {
     return {};
@@ -41,9 +46,15 @@ export function convertErrorToObject(errors) {
   return simplifiedErrors;
 }
 
-export async function createObject(entityInterface: Model<any>, objectToInsert: BaseEntity): Promise<TransactionResults> {
+/**
+ * Creating an object in the DB.
+ *
+ * @param entityModel - The model object.
+ * @param objectToInsert - The object to insert into the DB.
+ */
+export async function createObject(entityModel: Model<any>, objectToInsert: BaseEntity): Promise<TransactionResults> {
   try {
-    const createdObject = await entityInterface.create(objectToInsert);
+    const createdObject = await entityModel.create(objectToInsert);
     return {errors: null, object: createdObject};
   } catch ({name, errors, message}) {
 
@@ -55,14 +66,23 @@ export async function createObject(entityInterface: Model<any>, objectToInsert: 
   }
 }
 
-export async function getObject(entityInterface: Model<any>, {id, conditions}: GetEntityArguments) {
+/**
+ * Getting an object by ID
+ *
+ * @param entityModel - The model object.
+ * @param {string} id - The id of the user.
+ * @param {Conditions} conditions - the conditions to filter the users by.
+ *
+ * @throws {Error} When none of the arguments was passed.
+ */
+export async function getObject(entityModel: Model<any>, {id, conditions}: GetEntityArguments) {
 
   if (id) {
-    return entityInterface.findById({_id: id});
+    return entityModel.findById({_id: id});
   }
 
   if (conditions) {
-    return entityInterface.find(conditions);
+    return entityModel.find(conditions);
   }
 
   throw new Error('You need to pass an ID or conditions');

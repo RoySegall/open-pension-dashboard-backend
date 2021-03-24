@@ -6,7 +6,7 @@ import {
 } from './Utils';
 import mongoose from './db';
 
-type User = BaseEntity & {
+export type User = BaseEntity & {
   readonly username: string,
   readonly password: string,
   readonly email: string,
@@ -21,10 +21,23 @@ const userSchema = new mongoose.Schema({
 
 export const User = mongoose.model('users', userSchema);
 
+/**
+ * Creating a user.
+ *
+ * @param {User} user - The user object to create in the DB.
+ */
 export async function createUser(user: User): Promise<TransactionResults> {
   return await createObject(User, user);
 }
 
+/**
+ * Loading a user from the DB by id or condition.
+ *
+ * @param {string} id - The id of the user.
+ * @param {Conditions} conditions - the conditions to filter the users by.
+ *
+ * @throws {Error} When none of the arguments was passed.
+ */
 export async function getUser({id, conditions}: GetEntityArguments) {
   return getObject(User, {id, conditions});
 }
