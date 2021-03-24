@@ -1,8 +1,5 @@
 import { ApolloServer } from 'apollo-server';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
-
 import { resolvers } from './server/resolvers';
 import { typeDefs } from './server/schema';
 import { getPort } from './utils/config';

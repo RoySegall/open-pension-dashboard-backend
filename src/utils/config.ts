@@ -1,5 +1,8 @@
-function safeGet(name: string, defaultValue) {
-  return process.env[name] || defaultValue;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config()
+
+function safeGet(name: string, defaultValue = null) {
+  return process.env[name] ? process.env[name] : defaultValue;
 }
 
 export function getPort() {
@@ -8,4 +11,13 @@ export function getPort() {
 
 export function getMongoURL() {
   return safeGet('dbURL', 'mongodb://127.0.0.1/test');
+}
+
+export function getPusherCredentials() {
+  return {
+    appId: safeGet("pusher_app_id"),
+    key: safeGet("pusher_key"),
+    secret: safeGet("pusher_secret"),
+    cluster: safeGet("pusher_cluster", "ap2"),
+  };
 }

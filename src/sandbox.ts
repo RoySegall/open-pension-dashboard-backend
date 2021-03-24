@@ -1,4 +1,3 @@
-
 (async () => {
   console.log('a');
 })();
