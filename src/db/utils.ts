@@ -15,6 +15,15 @@ export type TransactionResults = {
   readonly object;
 };
 
+export type Conditions = {
+  readonly [field: string]: string
+};
+
+export type GetEntityArguments = {
+  readonly id?: string;
+  readonly conditions?: Conditions;
+};
+
 export function convertErrorToObject(errors) {
   if (isEmpty(errors)) {
     return {};
@@ -44,4 +53,17 @@ export async function createObject(entityInterface: Model<any>, objectToInsert: 
 
     return {errors: convertErrorToObject(errors), object: null}
   }
+}
+
+export async function getObject(entityInterface: Model<any>, {id, conditions}: GetEntityArguments) {
+
+  if (id) {
+    return entityInterface.findById({_id: id});
+  }
+
+  if (conditions) {
+    return entityInterface.find(conditions);
+  }
+
+  throw new Error('You need to pass an ID or conditions');
 }

@@ -1,4 +1,9 @@
-import { BaseEntity, createObject, TransactionResults } from './Utils';
+import {
+  BaseEntity,
+  createObject, GetEntityArguments,
+  getObject,
+  TransactionResults
+} from './Utils';
 import mongoose from './db';
 
 type User = BaseEntity & {
@@ -18,4 +23,8 @@ export const User = mongoose.model('users', userSchema);
 
 export async function createUser(user: User): Promise<TransactionResults> {
   return await createObject(User, user);
+}
+
+export async function getUser({id, conditions}: GetEntityArguments) {
+  return getObject(User, {id, conditions});
 }

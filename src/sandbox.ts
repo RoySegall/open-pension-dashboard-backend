@@ -1,8 +1,11 @@
-import { createUser } from './db/user';
+import { getUser } from './db/user';
 
 (async () => {
-  const {errors, object} = await createUser({username: 'tom', password:' pizza', email: 'tom@gmail.com'});
-  console.log(errors, object);
+  // const id = "6059acd9d7213cc8a81c5108";
+  // const conditions = {username: "noy"};
+  // const res = await getUser({conditions: {food: 'pizza', toppings: 'a'}});
+  const res = await getUser({});
+  console.log(res);
 })();
 
 
