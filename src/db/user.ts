@@ -7,7 +7,7 @@ import {
 import mongoose from './db';
 
 
-export type User = BaseEntity & {
+export type UserInterface = BaseEntity & {
   readonly username: string,
   readonly password: string,
   readonly email: string,
@@ -57,9 +57,9 @@ export const User = mongoose.model('users', userSchema);
 /**
  * Creating a user.
  *
- * @param {User} user - The user object to create in the DB.
+ * @param {UserInterface} user - The user object to create in the DB.
  */
-export async function createUser(user: User): Promise<TransactionResults> {
+export async function createUser(user: UserInterface): Promise<TransactionResults> {
   return await createObject(User, user);
 }
 

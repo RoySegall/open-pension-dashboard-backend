@@ -3,6 +3,7 @@ Todo:
 * [X] Typescript
 * [X] GraphQL - apollo
 * [ ] Kafka
+* [ ] services - view status and change addresses.  
 * [ ] Queue - typescript
 * [X] Mongo
 * [X] Sockets - pusher
@@ -10,11 +11,12 @@ Todo:
 
 ## Models:
 
+todo: manage other services.
 
 ### files
 name
 file_storage_id
-process_status - stored, processed, processed with errors, processed
+process_status - stored, processed, processed with errors
 
 ### token
 user
