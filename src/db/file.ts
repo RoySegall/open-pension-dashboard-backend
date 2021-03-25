@@ -49,11 +49,6 @@ export async function createFile(file: FileInterface): Promise<TransactionResult
 }
 
 export async function updateFileStatus(storageId: number, status: Status) {
-
   await File.findOneAndUpdate({storageId}, {status})
-  // file.status = status;
-  // file.save();
-  //
-  // return file;
 }
 

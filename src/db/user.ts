@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import {isEmpty} from 'loadsh';
+import { createTokenObject, TokenSchema, UserTokenInterface } from './token';
 
 import {
   BaseEntity, createObject, GetEntityArguments, getObject, TransactionResults
@@ -15,6 +16,7 @@ export type UserInterface = BaseEntity & {
   readonly updatedAt?: Date,
   readonly profilePictureStorageId?: number,
   readonly nameToPresent?: string,
+  readonly token?: UserTokenInterface,
 };
 
 const userSchema = new mongoose.Schema({
@@ -50,6 +52,9 @@ const userSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: () => new Date() },
   profilePictureStorageId: { type: Number },
   nameToPresent: { type: String },
+  token: {
+    type: TokenSchema,
+  }
 });
 
 export const User = mongoose.model('users', userSchema);
@@ -73,4 +78,25 @@ export async function createUser(user: UserInterface): Promise<TransactionResult
  */
 export async function getUser({id, conditions}: GetEntityArguments) {
   return getObject(User, {id, conditions});
+}
+
+export async function createToken(user: UserInterface) {
+  await User.findOneAndUpdate(
+    {_id: user._id},
+    {
+      token: createTokenObject()
+    }
+  )
+}
+
+export async function loadUserByToken() {
+  return 'a';
+}
+
+export async function loadToken() {
+  return 'a';
+}
+
+export async function deleteTokenForUser() {
+  return 'a';
 }

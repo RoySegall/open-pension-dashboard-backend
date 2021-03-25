@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 
-import { createUser } from './user';
+import { createToken, createUser } from './user';
 
 describe('Testing user', () => {
 
@@ -94,5 +94,30 @@ describe('Testing user', () => {
     const {object} = await createUser(validUser);
     expect(object.createdAt).not.toBeUndefined();
     expect(object.createdAt).not.toBeNull();
+  });
+
+  it('Should create a valid token for user', async() => {
+    const {object: user} = await createUser(validUser);
+    await createToken(user);
+  });
+
+  it('Loading user when passing token', async () => {
+    expect(1).toBeNull()
+  });
+
+  it('Should not load user when token is expires', async () => {
+    expect(1).toBeNull()
+  });
+
+  it('Should create a new token for user when passing the refresh token', async () => {
+    expect(1).toBeNull()
+  });
+
+  it('Should not load the user after refreshing the token', async () => {
+    expect(1).toBeNull();
+  });
+
+  it('Should not validate user when the token was removed for the user', async () => {
+    expect(1).toBeNull();
   });
 });
