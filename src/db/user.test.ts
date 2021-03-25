@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 
-import { createUser } from './userInterface';
+import { createUser } from './user';
 
 describe('Testing user', () => {
 

@@ -16,7 +16,7 @@ export type TransactionResults = {
 };
 
 export type Conditions = {
-  readonly [field: string]: string
+  readonly [field: string]: any
 };
 
 export type GetEntityArguments = {

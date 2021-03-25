@@ -1,6 +1,6 @@
 import {
   BaseEntity,
-  createObject,
+  createObject, GetEntityArguments, getObject,
   // GetEntityArguments, getObject,
   TransactionResults
 } from './Utils';
@@ -13,6 +13,7 @@ export type FileInterface = BaseEntity & {
 };
 
 export enum Status {
+  sent = 'sent',
   stored = 'stored',
   processed = 'processed',
   processedWithError = 'processedWithError',
@@ -26,26 +27,17 @@ const fileSchema = new mongoose.Schema({
 
 export const File = mongoose.model('files', fileSchema);
 
-// /**
-//  * Creating a user.
-//  *
-//  * @param {User} user - The user object to create in the DB.
-//  */
-// export async function createUser(user: User): Promise<TransactionResults> {
-//   return await createObject(User, user);
-// }
-//
-// /**
-//  * Loading a user from the DB by id or condition.
-//  *
-//  * @param {string} id - The id of the user.
-//  * @param {Conditions} conditions - the conditions to filter the users by.
-//  *
-//  * @throws {Error} When none of the arguments was passed.
-//  */
-// export async function getUser({id, conditions}: GetEntityArguments) {
-//   return getObject(User, {id, conditions});
-// }
+/**
+ * Loading a file from the DB by id or condition.
+ *
+ * @param {string} id - The id of the file.
+ * @param {Conditions} conditions - the conditions to filter the files by.
+ *
+ * @throws {Error} When none of the arguments was passed.
+ */
+export async function getFile({id, conditions}: GetEntityArguments) {
+  return getObject(File, {id, conditions});
+}
 
 /**
  * Creating a file.
@@ -56,6 +48,12 @@ export async function createFile(file: FileInterface): Promise<TransactionResult
   return await createObject(File, file);
 }
 
-// export async function updateFileStatus() {
-//   console.log('a');
-// }
+export async function updateFileStatus(storageId: number, status: Status) {
+
+  await File.findOneAndUpdate({storageId}, {status})
+  // file.status = status;
+  // file.save();
+  //
+  // return file;
+}
+
