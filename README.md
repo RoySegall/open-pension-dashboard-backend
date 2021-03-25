@@ -10,16 +10,6 @@ Todo:
 
 ## Models:
 
-### User
-id
-username
-password - encrypted
-email
-created at
-updated
-profile_picture_storage_id
-present name
-
 
 ### files
 name
