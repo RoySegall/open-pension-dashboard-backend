@@ -21,3 +21,7 @@ export function getPusherCredentials() {
     cluster: safeGet("pusher_cluster", "ap2"),
   };
 }
+
+export function getSaltRounds() {
+  return safeGet('saltRounds', 10);
+}

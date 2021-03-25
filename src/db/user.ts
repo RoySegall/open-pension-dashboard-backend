@@ -1,7 +1,10 @@
+import * as bcrypt from 'bcrypt';
+
 import {
   BaseEntity, createObject, GetEntityArguments, getObject, TransactionResults
 } from './Utils';
 import mongoose from './db';
+
 
 export type User = BaseEntity & {
   readonly username: string,
@@ -15,7 +18,16 @@ export type User = BaseEntity & {
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true, unique: false },
+  password: {
+    type: String,
+    required: true,
+    unique: false,
+    set: (value) => {
+      // For some reason can't access the config file.
+      const salt = bcrypt.genSaltSync(parseInt(process.env.saltRounds));
+      return bcrypt.hashSync(value, salt);
+    }
+  },
   email: {
     type: String,
     required: true,

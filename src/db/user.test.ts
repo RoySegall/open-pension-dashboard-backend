@@ -1,5 +1,8 @@
 import { createUser } from './user';
 
+import * as bcrypt from 'bcrypt';
+
+
 describe('Testing user', () => {
 
   const baseUser = {
@@ -73,8 +76,17 @@ describe('Testing user', () => {
     });
   });
 
-  it('Should encrypt the password', () => {
-    console.log('a');
+  it('Should encrypt the password', async () => {
+    baseUser.username = 'username';
+    baseUser.password = 'password';
+    baseUser.email = 'test@example.com';
+
+    const {object} = await createUser(baseUser);
+    expect(object.password).not.toBeNull();
+    expect(object.password).not.toBe('password');
+
+    const passwordMatch = await bcrypt.compare('password', object.password);
+    expect(passwordMatch).toBeTruthy();
   });
 
   it('Should auto fill the created at when creating a user', () => {
