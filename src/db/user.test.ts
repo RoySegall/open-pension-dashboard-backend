@@ -1,7 +1,6 @@
-import { createUser } from './user';
-
 import * as bcrypt from 'bcrypt';
 
+import { createUser } from './user';
 
 describe('Testing user', () => {
 
@@ -9,6 +8,12 @@ describe('Testing user', () => {
     username: '',
     password: '',
     email: '',
+  };
+
+  const validUser = {
+    username: 'username',
+    password: 'password',
+    email: 'test@example.com',
   };
 
   const createUserAndVerifyExpects = async (matrix) => {
@@ -77,11 +82,7 @@ describe('Testing user', () => {
   });
 
   it('Should encrypt the password', async () => {
-    baseUser.username = 'username';
-    baseUser.password = 'password';
-    baseUser.email = 'test@example.com';
-
-    const {object} = await createUser(baseUser);
+    const {object} = await createUser(validUser);
     expect(object.password).not.toBeNull();
     expect(object.password).not.toBe('password');
 
@@ -89,11 +90,9 @@ describe('Testing user', () => {
     expect(passwordMatch).toBeTruthy();
   });
 
-  it('Should auto fill the created at when creating a user', () => {
-    console.log('a');
-  });
-
-  it('Should changed the updated at when updating the user', () => {
-    console.log('a');
+  it('Should auto fill the created at when creating a user', async () => {
+    const {object} = await createUser(validUser);
+    expect(object.createdAt).not.toBeUndefined();
+    expect(object.createdAt).not.toBeNull();
   });
 });

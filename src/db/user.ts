@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import {isEmpty} from 'loadsh';
 
 import {
   BaseEntity, createObject, GetEntityArguments, getObject, TransactionResults
@@ -23,6 +24,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: false,
     set: (value) => {
+      if (isEmpty(value)) {
+        // We handle any empty values.
+        return null;
+      }
+
       // For some reason can't access the config file.
       const salt = bcrypt.genSaltSync(parseInt(process.env.saltRounds));
       return bcrypt.hashSync(value, salt);
@@ -40,8 +46,8 @@ const userSchema = new mongoose.Schema({
       message: 'The provided email is not a valid email',
     },
   },
-  createdAt: { type: Date },
-  updatedAt: { type: Date },
+  createdAt: { type: Date, default: () => new Date() },
+  updatedAt: { type: Date, default: () => new Date() },
   profilePictureStorageId: { type: Number },
   nameToPresent: { type: String },
 });

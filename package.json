@@ -54,6 +54,7 @@
     "bcrypt": "^5.0.1",
     "graphql": "^15.5.0",
     "loadash": "^1.0.0",
+    "loadsh": "0.0.4",
     "mongoose": "^5.12.1",
     "pusher": "^5.0.0",
     "ts-jest": "^26.5.4"
