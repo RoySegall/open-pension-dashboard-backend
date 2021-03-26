@@ -7,7 +7,6 @@ import {
 } from './Utils';
 import mongoose from './db';
 
-
 export type UserInterface = BaseEntity & {
   readonly username: string,
   readonly password: string,
@@ -32,8 +31,7 @@ const userSchema = new mongoose.Schema({
       }
 
       // For some reason can't access the config file.
-      const salt = bcrypt.genSaltSync(parseInt(process.env.saltRounds));
-      return bcrypt.hashSync(value, salt);
+      return hashToPassword(value);
     }
   },
   email: {
@@ -59,6 +57,11 @@ const userSchema = new mongoose.Schema({
 
 export const User = mongoose.model('users', userSchema);
 
+export function hashToPassword(stringToHash: string) {
+  const salt = bcrypt.genSaltSync(parseInt(process.env.saltRounds));
+  return bcrypt.hashSync(stringToHash, salt);
+}
+
 /**
  * Creating a user.
  *
@@ -80,23 +83,34 @@ export async function getUser({id, conditions}: GetEntityArguments) {
   return getObject(User, {id, conditions});
 }
 
-export async function createToken(user: UserInterface) {
+export async function createToken(user: UserInterface): Promise<UserTokenInterface> {
+  const token = createTokenObject();
   await User.findOneAndUpdate(
-    {_id: user._id},
-    {
-      token: createTokenObject()
-    }
+    {_id: user._id}, { token }
   )
+  return token;
 }
 
-export async function loadUserByToken() {
+export async function loadUserByToken(token: string) {
+  // const user = await User.findOne({'token.token': token});
+  const [user] = await getUser({conditions: {'token.token': token}});
+
+  const currentDate = new Date();
+
+  // @ts-ignore
+  const passedSeconds = (user.token.expires - currentDate) / 1000;
+
+  if (passedSeconds > 86400) {
+    return null;
+  }
+
+  return user.toJSON();
+}
+
+export async function refreshToken(token: string, refreshToken: string) {
   return 'a';
 }
 
-export async function loadToken() {
-  return 'a';
-}
-
-export async function deleteTokenForUser() {
+export async function invokeToken() {
   return 'a';
 }

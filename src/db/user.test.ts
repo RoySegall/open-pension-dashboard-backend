@@ -1,6 +1,11 @@
 import * as bcrypt from 'bcrypt';
 
-import { createToken, createUser } from './user';
+import {
+  createToken,
+  createUser,
+  getUser,
+  loadUserByToken, User
+} from './user';
 
 describe('Testing user', () => {
 
@@ -98,15 +103,42 @@ describe('Testing user', () => {
 
   it('Should create a valid token for user', async() => {
     const {object: user} = await createUser(validUser);
+    let userFromDB = await getUser({id: user._id});
+    expect(userFromDB.token).toBeUndefined();
     await createToken(user);
+
+    userFromDB = await getUser({id: user._id});
+    const {token, refreshToken, expires} = userFromDB.token;
+
+    expect(token).not.toBeNull();
+    expect(refreshToken).not.toBeNull();
+    expect(expires).not.toBeNull();
   });
 
   it('Loading user when passing token', async () => {
-    expect(1).toBeNull()
+    const {object: user} = await createUser(validUser);
+    const {token} = await createToken(user);
+
+    const loadedUserByToken = await loadUserByToken(token);
+
+    expect(String(user._id)).toBe(String(loadedUserByToken._id));
   });
 
   it('Should not load user when token is expires', async () => {
-    expect(1).toBeNull()
+    const {object: user} = await createUser(validUser);
+    const token = await createToken(user);
+
+    const reloadedUser = await getUser({id: user._id});
+
+    // Change the expires of the token to now.
+    reloadedUser.token.expires.setSeconds(reloadedUser.token.expires.getSeconds() + 86400);
+    await User.findOneAndUpdate(
+      {_id: user._id}, { token: reloadedUser.token }
+    )
+
+    const loadedUserByToken = await loadUserByToken(token.token);
+
+    expect(loadedUserByToken).toBeNull();
   });
 
   it('Should create a new token for user when passing the refresh token', async () => {

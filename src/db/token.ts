@@ -1,4 +1,5 @@
 import mongoose from './db';
+import { hashToPassword } from './user';
 
 export type UserTokenInterface = {
   readonly token: string,
@@ -12,14 +13,21 @@ export const TokenSchema = new mongoose.Schema({
   expires: {type: Date, require: true},
 });
 
-export function createTokenObject() {
-  return {
-    token: 'a',
-    refreshToken: 'b',
-    expires: new Date()
-  };
-}
+export function createTokenObject(): UserTokenInterface {
 
-export function checkIfTokenExpires() {
-  return true;
+  const createToken = (type: string) => {
+    // todo: Find a better way to generate a token string.
+    return hashToPassword(`${type}_${Date.now()}`);
+  };
+
+  const expires = new Date();
+
+  // todo: export to const.
+  expires.setSeconds(expires.getSeconds() + 86400);
+
+  return {
+    token: createToken('token'),
+    refreshToken: createToken('refreshToken'),
+    expires
+  };
 }
