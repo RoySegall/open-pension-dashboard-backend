@@ -85,6 +85,9 @@ export async function getUser({id, conditions}: GetEntityArguments) {
 
 export async function createToken(user: UserInterface): Promise<UserTokenInterface> {
   const token = createTokenObject();
+
+  // todo: export to a function called updated object by ID and then create
+  //  update user.
   await User.findOneAndUpdate(
     {_id: user._id}, { token }
   )
@@ -94,6 +97,10 @@ export async function createToken(user: UserInterface): Promise<UserTokenInterfa
 export async function loadUserByToken(token: string) {
   // const user = await User.findOne({'token.token': token});
   const [user] = await getUser({conditions: {'token.token': token}});
+
+  if (!user) {
+    return null;
+  }
 
   const currentDate = new Date();
 
@@ -108,9 +115,18 @@ export async function loadUserByToken(token: string) {
 }
 
 export async function refreshToken(token: string, refreshToken: string) {
-  return 'a';
+  const [user] = await getUser({
+    conditions: {
+      'token.token': token,
+      'token.refreshToken': refreshToken,
+    }
+  });
+
+  return await createToken(user)
 }
 
-export async function invokeToken() {
-  return 'a';
+export async function revokeToken(user: UserInterface) {
+  await User.findOneAndUpdate(
+    {_id: user._id}, { token: {} }
+  )
 }

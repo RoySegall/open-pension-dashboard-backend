@@ -4,7 +4,7 @@ import {
   createToken,
   createUser,
   getUser,
-  loadUserByToken, User
+  loadUserByToken, refreshToken, revokeToken, User
 } from './user';
 
 describe('Testing user', () => {
@@ -142,14 +142,49 @@ describe('Testing user', () => {
   });
 
   it('Should create a new token for user when passing the refresh token', async () => {
-    expect(1).toBeNull()
+    const {object: user} = await createUser(validUser);
+    const token = await createToken(user);
+
+    const refreshedToken = await refreshToken(token.token, token.refreshToken);
+    const reloadedUser = await getUser({id: user._id});
+
+    expect(token.token).not.toBe(reloadedUser.token.token);
+    expect(refreshedToken.token).toBe(reloadedUser.token.token);
   });
 
   it('Should not load the user after refreshing the token', async () => {
-    expect(1).toBeNull();
+    const {object: user} = await createUser(validUser);
+    const token = await createToken(user);
+
+    const userByToken = await loadUserByToken(token.token);
+    expect(String(userByToken._id)).toBe(String(user._id));
+
+    // Refresh the token and verify we cannot load the user again with the
+    // original token.
+    const refreshedToken = await refreshToken(token.token, token.refreshToken);
+
+    const userByTokenAfterRefresh = await loadUserByToken(token.token);
+    expect(userByTokenAfterRefresh).toBeNull();
+
+    const userFromNewRefreshToken = await loadUserByToken(refreshedToken.token);
+    expect(String(userFromNewRefreshToken._id)).toBe(String(user._id));
   });
 
   it('Should not validate user when the token was removed for the user', async () => {
-    expect(1).toBeNull();
+    const {object: user} = await createUser(validUser);
+    const token = await createToken(user);
+
+    const userByToken = await loadUserByToken(token.token);
+    expect(String(userByToken._id)).toBe(String(user._id));
+
+    // Deleting the token.
+    await revokeToken(user);
+
+    // Check the token was removed form the user object.
+    const userByTokenAfterRevoking = await loadUserByToken(token.token);
+    expect(userByTokenAfterRevoking).toBeNull();
+
+    const userFromDB = await getUser({id: user._id});
+    expect(userFromDB.token.token).toBeUndefined();
   });
 });
