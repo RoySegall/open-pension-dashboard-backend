@@ -3,7 +3,12 @@ import {isEmpty} from 'loadsh';
 import { createTokenObject, TokenSchema, UserTokenInterface } from './token';
 
 import {
-  BaseEntity, createObject, GetEntityArguments, getObject, TransactionResults
+  BaseEntity,
+  createObject,
+  GetEntityArguments,
+  getObject,
+  TransactionResults,
+  updateObject
 } from './Utils';
 import mongoose from './db';
 
@@ -83,14 +88,14 @@ export async function getUser({id, conditions}: GetEntityArguments) {
   return getObject(User, {id, conditions});
 }
 
+export async function updateUser({id, newValues}) {
+  await updateObject(User, id, newValues);
+}
+
 export async function createToken(user: UserInterface): Promise<UserTokenInterface> {
   const token = createTokenObject();
 
-  // todo: export to a function called updated object by ID and then create
-  //  update user.
-  await User.findOneAndUpdate(
-    {_id: user._id}, { token }
-  )
+  await updateUser({id: user._id, newValues: { token }})
   return token;
 }
 
@@ -126,7 +131,5 @@ export async function refreshToken(token: string, refreshToken: string) {
 }
 
 export async function revokeToken(user: UserInterface) {
-  await User.findOneAndUpdate(
-    {_id: user._id}, { token: {} }
-  )
+  await updateUser({id: user._id, newValues: { token: {} }});
 }

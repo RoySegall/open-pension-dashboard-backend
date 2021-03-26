@@ -1,10 +1,8 @@
 import * as bcrypt from 'bcrypt';
 
 import {
-  createToken,
-  createUser,
-  getUser,
-  loadUserByToken, refreshToken, revokeToken, User
+  createToken, createUser, getUser, loadUserByToken, refreshToken,
+  revokeToken, User
 } from './user';
 
 describe('Testing user', () => {
@@ -19,6 +17,19 @@ describe('Testing user', () => {
     username: 'username',
     password: 'password',
     email: 'test@example.com',
+  };
+
+  const createValidUser = async () => {
+    const {object: user} = await createUser(validUser);
+
+    return user;
+  }
+
+  const createUserAndToken = async () => {
+    const {object: user} = await createUser(validUser);
+    const token = await createToken(user);
+
+    return {user, token};
   };
 
   const createUserAndVerifyExpects = async (matrix) => {
@@ -69,8 +80,8 @@ describe('Testing user', () => {
 
     // Adding a password to the object.
     baseUser.email = 'test@example.com';
-    const {errors, object} = await createUser(baseUser);
-    expect(object).not.toBeNull();
+    const {errors, object: user} = await createUser(baseUser);
+    expect(user).not.toBeNull();
     expect(errors).toBeNull();
   });
 
@@ -79,30 +90,30 @@ describe('Testing user', () => {
     baseUser.password = 'password';
     baseUser.email = 'email';
 
-    const {errors, object} = await createUser(baseUser);
-    expect(object).toBeNull();
+    const {errors, object: user} = await createUser(baseUser);
+    expect(user).toBeNull();
     expect(errors).toStrictEqual({
       email: 'The provided email is not a valid email'
     });
   });
 
   it('Should encrypt the password', async () => {
-    const {object} = await createUser(validUser);
-    expect(object.password).not.toBeNull();
-    expect(object.password).not.toBe('password');
+    const user = await createValidUser();
+    expect(user.password).not.toBeNull();
+    expect(user.password).not.toBe('password');
 
-    const passwordMatch = await bcrypt.compare('password', object.password);
+    const passwordMatch = await bcrypt.compare('password', user.password);
     expect(passwordMatch).toBeTruthy();
   });
 
   it('Should auto fill the created at when creating a user', async () => {
-    const {object} = await createUser(validUser);
-    expect(object.createdAt).not.toBeUndefined();
-    expect(object.createdAt).not.toBeNull();
+    const user = await createValidUser();
+    expect(user.createdAt).not.toBeUndefined();
+    expect(user.createdAt).not.toBeNull();
   });
 
   it('Should create a valid token for user', async() => {
-    const {object: user} = await createUser(validUser);
+    const user = await createValidUser();
     let userFromDB = await getUser({id: user._id});
     expect(userFromDB.token).toBeUndefined();
     await createToken(user);
@@ -116,17 +127,13 @@ describe('Testing user', () => {
   });
 
   it('Loading user when passing token', async () => {
-    const {object: user} = await createUser(validUser);
-    const {token} = await createToken(user);
-
-    const loadedUserByToken = await loadUserByToken(token);
-
+    const {user, token} = await createUserAndToken();
+    const loadedUserByToken = await loadUserByToken(token.token);
     expect(String(user._id)).toBe(String(loadedUserByToken._id));
   });
 
   it('Should not load user when token is expires', async () => {
-    const {object: user} = await createUser(validUser);
-    const token = await createToken(user);
+    const {user, token} = await createUserAndToken();
 
     const reloadedUser = await getUser({id: user._id});
 
@@ -142,8 +149,7 @@ describe('Testing user', () => {
   });
 
   it('Should create a new token for user when passing the refresh token', async () => {
-    const {object: user} = await createUser(validUser);
-    const token = await createToken(user);
+    const {user, token} = await createUserAndToken();
 
     const refreshedToken = await refreshToken(token.token, token.refreshToken);
     const reloadedUser = await getUser({id: user._id});
@@ -153,9 +159,7 @@ describe('Testing user', () => {
   });
 
   it('Should not load the user after refreshing the token', async () => {
-    const {object: user} = await createUser(validUser);
-    const token = await createToken(user);
-
+    const {user, token} = await createUserAndToken();
     const userByToken = await loadUserByToken(token.token);
     expect(String(userByToken._id)).toBe(String(user._id));
 
@@ -171,8 +175,7 @@ describe('Testing user', () => {
   });
 
   it('Should not validate user when the token was removed for the user', async () => {
-    const {object: user} = await createUser(validUser);
-    const token = await createToken(user);
+    const {user, token} = await createUserAndToken();
 
     const userByToken = await loadUserByToken(token.token);
     expect(String(userByToken._id)).toBe(String(user._id));

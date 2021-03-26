@@ -87,3 +87,7 @@ export async function getObject(entityModel: Model<any>, {id, conditions}: GetEn
 
   throw new Error('You need to pass an ID or conditions');
 }
+
+export async function updateObject(entityModel: Model<any>, id, newValues) {
+  await entityModel.findOneAndUpdate({_id: id}, newValues)
+}
