@@ -62,6 +62,13 @@ const userSchema = new mongoose.Schema({
 
 export const User = mongoose.model('users', userSchema);
 
+/**
+ * Hading a text to a password.
+ *
+ * @param stringToHash - The text to hash.
+ *
+ * @return The hashed text as a password.
+ */
 export function hashToPassword(stringToHash: string) {
   const salt = bcrypt.genSaltSync(parseInt(process.env.saltRounds));
   return bcrypt.hashSync(stringToHash, salt);
@@ -88,17 +95,38 @@ export async function getUser({id, conditions}: GetEntityArguments) {
   return getObject(User, {id, conditions});
 }
 
+/**
+ * Updating a user.
+ *
+ * @param id - The ID of the uer.
+ * @param newValues - The new values.
+ */
 export async function updateUser({id, newValues}) {
   await updateObject(User, id, newValues);
 }
 
+/**
+ * Creating a token for a user and set it in the DB.
+ *
+ * @param user - The user object.
+ *
+ * @return - The token object.
+ */
 export async function createToken(user: UserInterface): Promise<UserTokenInterface> {
   const token = createTokenObject();
 
-  await updateUser({id: user._id, newValues: { token }})
+  await updateUser({id: user._id, newValues: { token }});
+
   return token;
 }
 
+/**
+ * Loading a user by token.
+ *
+ * @param token - The token to search a user by.
+ *
+ * @return JSON representation of the user.
+ */
 export async function loadUserByToken(token: string) {
   // const user = await User.findOne({'token.token': token});
   const [user] = await getUser({conditions: {'token.token': token}});
@@ -119,6 +147,14 @@ export async function loadUserByToken(token: string) {
   return user.toJSON();
 }
 
+/**
+ * Refreshing a token for a user.
+ *
+ * @param token - The token of the user.
+ * @param refreshToken - The refresh token.
+ *
+ * @return Thew new token object.
+ */
 export async function refreshToken(token: string, refreshToken: string) {
   const [user] = await getUser({
     conditions: {
@@ -130,6 +166,11 @@ export async function refreshToken(token: string, refreshToken: string) {
   return await createToken(user)
 }
 
+/**
+ * Revoking a token for user i.e logout.
+ *
+ * @param user - The user object.
+ */
 export async function revokeToken(user: UserInterface) {
   await updateUser({id: user._id, newValues: { token: {} }});
 }
