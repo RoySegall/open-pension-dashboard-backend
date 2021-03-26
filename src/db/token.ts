@@ -13,6 +13,9 @@ export const TokenSchema = new mongoose.Schema({
   expires: {type: Date, require: true},
 });
 
+/**
+ * Creating a base token object.
+ */
 export function createTokenObject(): UserTokenInterface {
 
   const createToken = (type: string) => {
