@@ -9,7 +9,9 @@ import mongoose from './db';
 export type FileInterface = BaseEntity & {
   readonly filename: string,
   readonly storageId?: number,
-  readonly status: Status
+  readonly status: Status,
+  readonly createdAt?: Date,
+  readonly updatedAt?: Date,
 };
 
 export enum Status {
@@ -22,7 +24,9 @@ export enum Status {
 const fileSchema = new mongoose.Schema({
   filename: { type: String, required: true },
   storageId: {type: Number, unique: true},
-  status: {type: String, required: true, enum: Status}
+  status: {type: String, required: true, enum: Status},
+  createdAt: { type: Date, default: () => new Date() },
+  updatedAt: { type: Date, default: () => new Date() },
 });
 
 export const File = mongoose.model('files', fileSchema);
@@ -48,7 +52,16 @@ export async function createFile(file: FileInterface): Promise<TransactionResult
   return await createObject(File, file);
 }
 
+/**
+ * Update the file status.
+ *
+ * @param storageId - The storage ID.
+ * @param status - The new status of the file.
+ */
 export async function updateFileStatus(storageId: number, status: Status) {
   await File.findOneAndUpdate({storageId}, {status})
 }
 
+export function getFiles() {
+  return File.find();
+}

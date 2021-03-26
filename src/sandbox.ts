@@ -1,8 +1,7 @@
-import { createUser } from './db/user';
+import { createFile, Status } from './db/file';
 
 (async () => {
-  const res = await createUser({email: 'b', username: 'a', password: 'a'});
-  console.log(res);
+  await createFile({filename: 'foo.png', storageId: 42, status: Status.stored});
 })();
 
 
