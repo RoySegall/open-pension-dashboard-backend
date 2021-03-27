@@ -56,3 +56,16 @@ export const getQueryForFileCreation = ({filename, storageId, status}) => gql`
     }
   }
 `;
+
+export const getQueryForFileUpdate = ({id, filename, storageId, status}) => gql`
+  query {
+    fileUpdate(id: "${id}", filename: "${filename}", storageId: ${storageId}, status: "${status}") {
+      filename,
+      id,
+      status,
+      storageId,
+      createdAt,
+      updatedAt,
+    }
+  }
+`;

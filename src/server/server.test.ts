@@ -2,7 +2,7 @@ import { createFile, getFile, Status } from '../db/file';
 
 import {
   createTestingServer, filesQuery,
-  getQueryForFile, getQueryForFileCreation,
+  getQueryForFile, getQueryForFileCreation, getQueryForFileUpdate,
   sendQuery
 } from './testingUtils';
 
@@ -73,8 +73,28 @@ describe('Testing server', () => {
     expect(loadingFileFromDB.filename).toBe(filename);
   });
 
-  it('Testing mutation of a file: updating', () => {
-    expect(1).toBeNull();
+  it('Testing mutation of a file: updating', async () => {
+    const {object: file} = await createFile({filename: 'foo.png', storageId: 42, status: Status.stored});
+    expect(file.filename).toBe('foo.png');
+
+    const {data: updatedFile} = await sendQuery(getQueryForFileUpdate({
+      id: String(file._id),
+      filename: 'cat.png',
+      storageId: 55,
+      status: Status.processed
+    }), testingServer);
+
+    const {filename, id, status, storageId} = updatedFile.fileUpdate;
+
+    expect(filename).toBe('cat.png');
+    expect(status).toBe(Status.processed);
+    expect(storageId).toBe(55);
+
+    const loadingFileFromDB = await getFile({id: id});
+
+    expect(loadingFileFromDB).not.toBeNull();
+    expect(loadingFileFromDB).not.toBeUndefined();
+    expect(loadingFileFromDB.filename).toBe('cat.png');
   });
 
   it('Testing mutation of file with invalid values', () => {

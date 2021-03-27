@@ -14,5 +14,6 @@ export const typeDefs = gql`
     files: [File],
     file(id: ID!): File,
     fileCreate(filename: String, storageId: Int, status: String): File,
+    fileUpdate(id: ID!, filename: String, storageId: Int, status: String): File,
   }
 `;

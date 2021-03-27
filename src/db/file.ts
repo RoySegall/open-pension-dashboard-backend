@@ -2,7 +2,7 @@ import {
   BaseEntity,
   createObject, GetEntityArguments, getObject,
   // GetEntityArguments, getObject,
-  TransactionResults
+  TransactionResults, updateObject
 } from './Utils';
 import mongoose from './db';
 
@@ -60,4 +60,8 @@ export async function createFile(file: FileInterface): Promise<TransactionResult
  */
 export async function updateFileStatus(storageId: number, status: Status) {
   await File.findOneAndUpdate({storageId}, {status});
+}
+
+export async function updateFile(id, newValues) {
+  return await updateObject(File, id, newValues);
 }

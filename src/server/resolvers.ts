@@ -1,4 +1,4 @@
-import { createFile, getFile } from '../db/file';
+import { createFile, getFile, updateFile } from '../db/file';
 
 export const resolvers = {
   Query: {
@@ -11,6 +11,12 @@ export const resolvers = {
     fileCreate: async (_, args) => {
       const {object: file} = await createFile(args);
       return file
+    },
+
+    fileUpdate: async (_, args) => {
+      const id = args.id;
+      delete args.id;
+      return await updateFile(id, args);
     },
   },
 };

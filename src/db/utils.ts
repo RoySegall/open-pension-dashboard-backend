@@ -96,5 +96,5 @@ export async function getObject(entityModel: Model<any>, {id, conditions}: GetEn
  * @param newValues - The new values to apply.
  */
 export async function updateObject(entityModel: Model<any>, id, newValues) {
-  await entityModel.findOneAndUpdate({_id: id}, newValues)
+  return entityModel.findOneAndUpdate({_id: id}, newValues, {new: true})
 }
