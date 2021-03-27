@@ -11,6 +11,8 @@ export const typeDefs = gql`
   }
 
   type Query {
-    files: [File]
+    files: [File],
+    file(id: ID!): File,
+    fileCreate(filename: String, storageId: Int, status: String): File,
   }
 `;

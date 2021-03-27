@@ -59,9 +59,5 @@ export async function createFile(file: FileInterface): Promise<TransactionResult
  * @param status - The new status of the file.
  */
 export async function updateFileStatus(storageId: number, status: Status) {
-  await File.findOneAndUpdate({storageId}, {status})
-}
-
-export function getFiles() {
-  return File.find();
+  await File.findOneAndUpdate({storageId}, {status});
 }
