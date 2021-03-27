@@ -53,4 +53,16 @@ describe('Testing server', () => {
     expect(String(file.createdAt.getTime())).toBe(fileFromResponse.createdAt);
     expect(String(file.updatedAt.getTime())).toBe(fileFromResponse.updatedAt);
   });
+
+  it('Loading a resolver for a single file', () => {
+    expect(1).toBeNull();
+  });
+
+  it('Testing mutation of a file', () => {
+    expect(1).toBeNull();
+  });
+
+  it('Testing mutation of file with invalid values', () => {
+    expect(1).toBeNull();
+  });
 });
