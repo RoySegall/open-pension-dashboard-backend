@@ -1,5 +1,6 @@
 import { ApolloServer, gql } from 'apollo-server';
 import { createTestClient } from 'apollo-server-testing';
+
 import { createFile, Status } from '../db/file';
 
 import {resolvers} from './resolvers';
@@ -32,7 +33,8 @@ describe('Testing server', () => {
           id,
           status,
           storageId,
-          createdAt
+          createdAt,
+          updatedAt,
         }
       }
     `;
@@ -42,9 +44,13 @@ describe('Testing server', () => {
 
     // Adding a dummy file and send request.
     const {object: file} = await createFile({filename: 'foo.png', storageId: 42, status: Status.stored});
+    const {data: filesResponse} = await sendQuery(query);
+    const [fileFromResponse] = filesResponse.files;
 
-    const {data: FilesResponse} = await sendQuery(query);
-
-    expect(FilesResponse).toStrictEqual({files: [file.toJSON()]});
+    expect(String(file._id)).toBe(fileFromResponse.id);
+    expect(file.filename).toBe(fileFromResponse.filename);
+    expect(file.storageId).toBe(fileFromResponse.storageId);
+    expect(String(file.createdAt.getTime())).toBe(fileFromResponse.createdAt);
+    expect(String(file.updatedAt.getTime())).toBe(fileFromResponse.updatedAt);
   });
 });
