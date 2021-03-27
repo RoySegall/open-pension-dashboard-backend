@@ -97,7 +97,12 @@ describe('Testing server', () => {
     expect(loadingFileFromDB.filename).toBe('cat.png');
   });
 
-  it('Testing mutation of file with invalid values', () => {
-    expect(1).toBeNull();
+  it('Testing mutation of file with invalid values', async () => {
+    await createFile({filename: 'foo.png', storageId: 42, status: Status.stored});
+
+    const {data: response, errors} = await sendQuery(getQueryForFileCreation(validFile), testingServer);
+
+    expect(response.fileCreate).toBeNull();
+    expect(errors[0].message).toContain('storageId_1 dup key')
   });
 });

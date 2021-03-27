@@ -1,3 +1,5 @@
+import { UserInputError } from 'apollo-server';
+
 import { createFile, getFile, updateFile } from '../db/file';
 
 export const resolvers = {
@@ -9,7 +11,11 @@ export const resolvers = {
     },
 
     fileCreate: async (_, args) => {
-      const {object: file} = await createFile(args);
+      const {object: file, errors} = await createFile(args);
+
+      if (errors) {
+        throw new UserInputError(errors)
+      }
       return file
     },
 
