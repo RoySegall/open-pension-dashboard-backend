@@ -45,7 +45,7 @@ export const fileQuery = (fileId: string) => gql`
 `;
 
 export const fileCreationQuery = ({filename, storageId, status}) => gql`
-  query {
+  mutation {
     fileCreate(filename: "${filename}", storageId: ${storageId}, status: "${status}") {
       filename,
       id,
@@ -58,7 +58,7 @@ export const fileCreationQuery = ({filename, storageId, status}) => gql`
 `;
 
 export const fileUpdateQuery = ({id, filename, storageId, status}) => gql`
-  query {
+  mutation {
     fileUpdate(id: "${id}", filename: "${filename}", storageId: ${storageId}, status: "${status}") {
       filename,
       id,
@@ -95,7 +95,7 @@ export const userQuery = (id) => gql`
 `;
 
 export const userCreationQuery = ({username, password, email, nameToPresent = '', profilePictureStorageId = null}) => gql`
-  query {
+  mutation {
     userCreate(username: "${username}", password: "${password}", email: "${email}", nameToPresent: "${nameToPresent}", profilePictureStorageId: ${profilePictureStorageId}) {
       id
       username
@@ -107,7 +107,7 @@ export const userCreationQuery = ({username, password, email, nameToPresent = ''
 `;
 
 export const userUpdateQuery = ({id, username, email, password, nameToPresent, profilePictureStorageId}) => gql`
-  query {
+  mutation {
     userUpdate(id: "${id}", username: "${username}", password: "${password}", email: "${email}", nameToPresent: "${nameToPresent}", profilePictureStorageId: ${profilePictureStorageId}) {
       id
       username

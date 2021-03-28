@@ -23,11 +23,14 @@ export const typeDefs = gql`
   type Query {
     files: [File],
     file(id: ID!): File,
-    fileCreate(filename: String, storageId: Int, status: String): File,
-    fileUpdate(id: ID!, filename: String, storageId: Int, status: String): File,
-
     users: [User],
     user(id: ID!): User,
+    me: User
+  },
+
+  type Mutation {
+    fileCreate(filename: String, storageId: Int, status: String): File,
+    fileUpdate(id: ID!, filename: String, storageId: Int, status: String): File,
     userCreate(username: String, password: String, email: String, nameToPresent: String, profilePictureStorageId: Int): User,
     userUpdate(id: ID!, username: String, password: String, email: String, nameToPresent: String, profilePictureStorageId: Int): User
   }
