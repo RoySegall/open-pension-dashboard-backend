@@ -1,8 +1,10 @@
 import { UserInputError } from 'apollo-server';
 import { createFile, updateFile } from '../../db/file';
+import { createTokenObject } from '../../db/token';
 import { createUser, updateUser } from '../../db/user';
 
 export default {
+  // File.
   fileCreate: async (_, args) => {
     const {object: file, errors} = await createFile(args);
 
@@ -16,6 +18,7 @@ export default {
     return await updateFile(id, args);
   },
 
+  // User.
   userCreate: async (_, args) => {
     const {object: user, errors} = await createUser(args);
 
@@ -29,4 +32,15 @@ export default {
     const id = args.id;
     return await updateUser({id, newValues: args});
   },
+
+  // Auth.
+  tokenCreate: async () => {
+    return createTokenObject();
+  },
+  refreshToken: async () => {
+    return createTokenObject();
+  },
+  revokeToken: async () => {
+    return true;
+  }
 }
