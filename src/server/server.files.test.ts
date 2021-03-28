@@ -2,11 +2,11 @@ import { createFile, getFile, Status } from '../db/file';
 
 import {
   createTestingServer, filesQuery,
-  getQueryForFile, getQueryForFileCreation, getQueryForFileUpdate,
+  fileQuery, fileCreationQuery, fileUpdateQuery,
   sendQuery
 } from './testingUtils';
 
-describe('Testing server', () => {
+describe('Testing server: File', () => {
 
   let testingServer;
 
@@ -43,20 +43,20 @@ describe('Testing server', () => {
   it('Loading a resolver for a single file', async () => {
 
     const {data: emptyFilesResponse} = await sendQuery(
-      getQueryForFile("1"),
+      fileQuery("1"),
       testingServer
     );
     expect(emptyFilesResponse.file).toBeNull();
 
     const {object: file} = await createFile(validFile);
-    const {data: FilesResponse} = await sendQuery(getQueryForFile(String(file._id)), testingServer);
+    const {data: FilesResponse} = await sendQuery(fileQuery(String(file._id)), testingServer);
 
     compareFileFromResponse(file, FilesResponse.file);
   });
 
   it('Testing mutation of a file: creating', async () => {
     const {data: emptyFilesResponse} = await sendQuery(
-      getQueryForFileCreation(validFile),
+      fileCreationQuery(validFile),
       testingServer
     );
 
@@ -77,7 +77,7 @@ describe('Testing server', () => {
     const {object: file} = await createFile({filename: 'foo.png', storageId: 42, status: Status.stored});
     expect(file.filename).toBe('foo.png');
 
-    const {data: updatedFile} = await sendQuery(getQueryForFileUpdate({
+    const {data: updatedFile} = await sendQuery(fileUpdateQuery({
       id: String(file._id),
       filename: 'cat.png',
       storageId: 55,
@@ -100,7 +100,7 @@ describe('Testing server', () => {
   it('Testing mutation of file with invalid values', async () => {
     await createFile({filename: 'foo.png', storageId: 42, status: Status.stored});
 
-    const {data: response, errors} = await sendQuery(getQueryForFileCreation(validFile), testingServer);
+    const {data: response, errors} = await sendQuery(fileCreationQuery(validFile), testingServer);
 
     expect(response.fileCreate).toBeNull();
     expect(errors[0].message).toContain('storageId_1 dup key')

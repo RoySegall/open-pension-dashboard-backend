@@ -10,10 +10,25 @@ export const typeDefs = gql`
     updatedAt: String,
   }
 
+  type User {
+    id: String,
+    username: String,
+    email: String,
+    createdAt: String,
+    updatedAt: String,
+    profilePictureStorageId: Int,
+    nameToPresent: String,
+  }
+
   type Query {
     files: [File],
     file(id: ID!): File,
     fileCreate(filename: String, storageId: Int, status: String): File,
     fileUpdate(id: ID!, filename: String, storageId: Int, status: String): File,
+
+    users: [User],
+    user(id: ID!): User,
+    userCreate(username: String, password: String, email: String, nameToPresent: String, profilePictureStorageId: Int): User,
+    userUpdate(id: ID!, username: String, password: String, email: String, nameToPresent: String, profilePictureStorageId: Int): User
   }
 `;

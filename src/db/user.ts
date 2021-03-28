@@ -102,7 +102,7 @@ export async function getUser({id, conditions}: GetEntityArguments) {
  * @param newValues - The new values.
  */
 export async function updateUser({id, newValues}) {
-  await updateObject(User, id, newValues);
+  return await updateObject(User, id, newValues);
 }
 
 /**

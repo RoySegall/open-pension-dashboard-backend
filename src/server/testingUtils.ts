@@ -31,7 +31,7 @@ export const filesQuery = gql`
   }
 `;
 
-export const getQueryForFile = (fileId: string) => gql`
+export const fileQuery = (fileId: string) => gql`
   query {
     file(id: "${fileId}") {
       filename,
@@ -44,7 +44,7 @@ export const getQueryForFile = (fileId: string) => gql`
   }
 `;
 
-export const getQueryForFileCreation = ({filename, storageId, status}) => gql`
+export const fileCreationQuery = ({filename, storageId, status}) => gql`
   query {
     fileCreate(filename: "${filename}", storageId: ${storageId}, status: "${status}") {
       filename,
@@ -57,7 +57,7 @@ export const getQueryForFileCreation = ({filename, storageId, status}) => gql`
   }
 `;
 
-export const getQueryForFileUpdate = ({id, filename, storageId, status}) => gql`
+export const fileUpdateQuery = ({id, filename, storageId, status}) => gql`
   query {
     fileUpdate(id: "${id}", filename: "${filename}", storageId: ${storageId}, status: "${status}") {
       filename,
@@ -69,3 +69,52 @@ export const getQueryForFileUpdate = ({id, filename, storageId, status}) => gql`
     }
   }
 `;
+
+export const usersQuery = gql`
+  query {
+    users {
+      id
+      username
+      email
+      nameToPresent
+      profilePictureStorageId
+    }
+  }
+`
+
+export const userQuery = (id) => gql`
+  query {
+    user(id: "${id}") {
+      id
+      username
+      email
+      nameToPresent
+      profilePictureStorageId
+    }
+  }
+`;
+
+export const userCreationQuery = ({username, password, email, nameToPresent = '', profilePictureStorageId = null}) => gql`
+  query {
+    userCreate(username: "${username}", password: "${password}", email: "${email}", nameToPresent: "${nameToPresent}", profilePictureStorageId: ${profilePictureStorageId}) {
+      id
+      username
+      email
+      nameToPresent
+      profilePictureStorageId
+    }
+  }
+`;
+
+export const userUpdateQuery = ({id, username, email, password, nameToPresent, profilePictureStorageId}) => gql`
+  query {
+    userUpdate(id: "${id}", username: "${username}", password: "${password}", email: "${email}", nameToPresent: "${nameToPresent}", profilePictureStorageId: ${profilePictureStorageId}) {
+      id
+      username
+      email
+      nameToPresent
+      profilePictureStorageId
+    }
+  }
+`;
+
