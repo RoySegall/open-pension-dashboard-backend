@@ -10,10 +10,13 @@ import {
   refreshToken, revokeToken,
   updateUser
 } from '../../db/user';
+import { assertLoggedIn } from '../server';
 
 export default {
   // File.
-  fileCreate: async (_, args) => {
+  fileCreate: async (_, args, context) => {
+    assertLoggedIn(context);
+
     const {object: file, errors} = await createFile(args);
 
     if (errors) {
@@ -21,13 +24,15 @@ export default {
     }
     return file
   },
-  fileUpdate: async (_, args) => {
+  fileUpdate: async (_, args, context) => {
+    assertLoggedIn(context);
     const id = args.id;
     return await updateFile(id, args);
   },
 
   // User.
-  userCreate: async (_, args) => {
+  userCreate: async (_, args, context) => {
+    assertLoggedIn(context);
     const {object: user, errors} = await createUser(args);
 
     if (errors) {
@@ -36,7 +41,8 @@ export default {
 
     return user
   },
-  userUpdate: async (_, args) => {
+  userUpdate: async (_, args, context) => {
+    assertLoggedIn(context);
     const id = args.id;
     return await updateUser({id, newValues: args});
   },

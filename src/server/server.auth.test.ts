@@ -3,7 +3,12 @@ import { createToken, createUser, getUser } from '../db/user';
 import * as server from './server'
 const { getUserFromRequest } = server;
 import {
-  createTestingServer, meQuery, refreshTokenQuery, revokeTokenQuery, sendQuery,
+  createTestingServer,
+  filesQuery,
+  meQuery,
+  refreshTokenQuery,
+  revokeTokenQuery,
+  sendQuery,
   tokenQuery
 } from './testingUtils';
 
@@ -111,7 +116,7 @@ describe('Auth', () => {
 
   it('getUserFromRequest: Should return the correct user when passing the token in the headers', async () => {
     const user = await createValidUser();
-    const token = await createToken(user);
+    const {token} = await createToken(user);
 
     const {user: userFromAuthHandler} = await getUserFromRequest({headers: {authorization: token}});
     expect(String(userFromAuthHandler._id)).toBe(String(user._id));
@@ -148,7 +153,14 @@ describe('Auth', () => {
   });
 
   it('Should block requests when the token does not exists in the headers', async () => {
-    expect(1).toBe(1);
+    jest.spyOn(server, 'getUserFromRequest')
+      .mockImplementation(async () => {
+        return {}
+      });
+
+    const {errors: [{message}], data: {files}} = await sendQuery(filesQuery, testingServer);
+    expect(message).toBe('you must be logged in');
+    expect(files).toBeNull();
   });
 
 });
