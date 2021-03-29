@@ -1,7 +1,8 @@
 import { createToken, createUser, getUser } from '../db/user';
+import { getUserFromRequest } from './server';
 
 import {
-  createTestingServer, meQuery,
+  createTestingServer,
   refreshTokenQuery, revokeTokenQuery,
   sendQuery,
   tokenQuery
@@ -109,26 +110,23 @@ describe('Auth', () => {
     expect(reloadedUser.token.expires).toBeUndefined();
   });
 
-  it('Should return the current logged in user when query `me` and the token exists in the header', async () => {
+  it('getUserFromRequest: Should return the correct user when passing the token in the headers', async () => {
     const user = await createValidUser();
     const token = await createToken(user);
 
-    console.log(token);
-
-    const {data} = await sendQuery(meQuery(), testingServer);
-
-    console.log(data);
+    const {user: userFromAuthHandler} = await getUserFromRequest({headers: {authorization: token}});
+    expect(String(userFromAuthHandler._id)).toBe(String(user._id));
   });
 
-  it('Should not return the current logged in user when query `me` and the token does not exists in the header', async () => {
+  it('getUserFromRequest: Should not return any user object when passing invalid/not existing token', async () => {
     expect(1).toBe(1);
   });
 
-  it('Should not return any user when query `me` and invalid token exists in the header', async () => {
+  it('getUserFromRequest should be invoked when query the server', async () => {
     expect(1).toBe(1);
   });
 
-  it('Should not authorize to the user, files, and me when not authenticated', async () => {
+  it('Should block requests when the token does not exists in the headers', async () => {
     expect(1).toBe(1);
   });
 
