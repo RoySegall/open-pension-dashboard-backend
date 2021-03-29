@@ -1,6 +1,11 @@
-import { createUser, getUser } from '../db/user';
+import { createToken, createUser, getUser } from '../db/user';
 
-import { createTestingServer, sendQuery, tokenQuery } from './testingUtils';
+import {
+  createTestingServer,
+  refreshTokenQuery,
+  sendQuery,
+  tokenQuery
+} from './testingUtils';
 
 describe('Auth', () => {
 
@@ -26,7 +31,7 @@ describe('Auth', () => {
 
   it('Should create an access token when passing correct credentials', async () => {
     const user = await createValidUser();
-    const {data} = await sendQuery(tokenQuery(user), testingServer);
+    const {data} = await sendQuery(tokenQuery(validUser), testingServer);
 
     const {token, refreshToken} = data.tokenCreate;
 
@@ -56,28 +61,52 @@ describe('Auth', () => {
       );
 
       const [error] = errors;
-      expect(data).toBeNull();
+      expect(data.tokenCreate).toBeNull();
       expect(error.message).toBe('Wrong username or password');
     });
+  });
+
+  it('Should refresh user token', async () => {
+    const user = await createValidUser();
+    const token = await createToken(user);
+
+    const {data: refreshTokenResults} = await sendQuery(refreshTokenQuery(token), testingServer);
+    const {token: newToken, refreshToken: newRefreshToken} = refreshTokenResults.refreshToken;
+
+    // Reload the user.
+    const reloadedUser = await getUser({id: String(user._id)});
+
+    expect(reloadedUser.token).not.toBeNull();
+    expect(reloadedUser.token).not.toBeUndefined();
+
+    expect(token.token).not.toBe(reloadedUser.token.token);
+    expect(token.refreshToken).not.toBe(reloadedUser.token.refreshToken);
+
+    expect(newToken).toBe(reloadedUser.token.token);
+    expect(newRefreshToken).toBe(reloadedUser.token.refreshToken);
+  });
+
+  it('Should fail gracefully when passing wrong access token and refresh token', async () => {
+    const {data: refreshTokenResults, errors} = await sendQuery(refreshTokenQuery({token: "foo", refreshToken: "bar"}), testingServer);
+    const [{message}] = errors;
+
+    expect(message).toBe('An error occurred while trying to refresh the token');
+    expect(refreshTokenResults.refreshToken).toBeNull();
   });
 
   it('Should delete the token form the user object when revoking the token', () => {
     expect(1).toBe(1);
   });
 
-  it('Should refresh user token', () => {
+  it('Should return the current logged in user when query `me` and the token exists in the header', async () => {
     expect(1).toBe(1);
   });
 
-  it('Should return the current logged in user when query `me` and the token exists in the header', () => {
+  it('Should not return the current logged in user when query `me` and the token does not exists in the header', async () => {
     expect(1).toBe(1);
   });
 
-  it('Should not return the current logged in user when query `me` and the token does not exists in the header', () => {
-    expect(1).toBe(1);
-  });
-
-  it('Should not return any user when query `me` and invalid token exists in the header', () => {
+  it('Should not return any user when query `me` and invalid token exists in the header', async () => {
     expect(1).toBe(1);
   });
 

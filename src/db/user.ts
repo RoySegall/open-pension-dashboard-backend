@@ -163,6 +163,10 @@ export async function refreshToken(token: string, refreshToken: string) {
     }
   });
 
+  if (isEmpty(user)) {
+    throw new Error('An error occurred while trying to refresh the token');
+  }
+
   return await createToken(user)
 }
 

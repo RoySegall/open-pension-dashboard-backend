@@ -128,3 +128,13 @@ export const tokenQuery = ({username = '', email = '', password}) => gql`
   }
 `
 
+export const refreshTokenQuery = ({token, refreshToken}) => gql`
+  mutation {
+    refreshToken(token: "${token}", refreshToken: "${refreshToken}") {
+      token
+      refreshToken
+      expires
+    }
+  }
+`
+

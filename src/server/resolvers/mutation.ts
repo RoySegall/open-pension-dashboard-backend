@@ -3,8 +3,13 @@ import * as bcrypt from 'bcrypt';
 import {isEmpty} from 'lodash';
 
 import { createFile, updateFile } from '../../db/file';
-import { createTokenObject } from '../../db/token';
-import { createToken, createUser, getUser, updateUser } from '../../db/user';
+import {
+  createToken,
+  createUser,
+  getUser,
+  refreshToken,
+  updateUser
+} from '../../db/user';
 
 export default {
   // File.
@@ -66,8 +71,8 @@ export default {
 
     return token;
   },
-  refreshToken: async () => {
-    return createTokenObject();
+  refreshToken: async (_, args) => {
+    return await refreshToken(args.token, args.refreshToken);
   },
   revokeToken: async () => {
     return true;
