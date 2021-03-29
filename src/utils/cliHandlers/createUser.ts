@@ -3,7 +3,6 @@ import { createUser } from '../../db/user';
 
 export default () => {
 
-
   const questions = [
     {
       type: 'input',
