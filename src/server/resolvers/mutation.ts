@@ -1,7 +1,10 @@
 import { UserInputError } from 'apollo-server';
+import * as bcrypt from 'bcrypt';
+import {isEmpty} from 'lodash';
+
 import { createFile, updateFile } from '../../db/file';
 import { createTokenObject } from '../../db/token';
-import { createUser, updateUser } from '../../db/user';
+import { createToken, createUser, getUser, updateUser } from '../../db/user';
 
 export default {
   // File.
@@ -34,8 +37,34 @@ export default {
   },
 
   // Auth.
-  tokenCreate: async () => {
-    return createTokenObject();
+  tokenCreate: async (_, args) => {
+    const {username, email, password} = args;
+    const conditions = {};
+
+    if (username) {
+      conditions['username'] = username;
+    } else {
+      conditions['email'] = email;
+    }
+
+    const [user] = await getUser({conditions});
+
+    if (isEmpty(user)) {
+      throw new UserInputError('Wrong username or password')
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      throw new UserInputError('Wrong username or password')
+    }
+
+    const token = await createToken(user);
+
+    // @ts-ignore
+    token['expires'] = Math.ceil(token.expires.getTime() / 1000);
+
+    return token;
   },
   refreshToken: async () => {
     return createTokenObject();

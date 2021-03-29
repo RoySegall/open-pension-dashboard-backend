@@ -118,3 +118,13 @@ export const userUpdateQuery = ({id, username, email, password, nameToPresent, p
   }
 `;
 
+export const tokenQuery = ({username = '', email = '', password}) => gql`
+  mutation {
+    tokenCreate(username: "${username}", email: "${email}", password: "${password}") {
+      token
+      refreshToken
+      expires
+    }
+  }
+`
+
