@@ -141,7 +141,11 @@ export const revokeTokenQuery = ({id}) => gql`
 export const meQuery = () => gql`
   query {
     me {
+      id
       username
+      email
+      nameToPresent
+      profilePictureStorageId
     }
   }
 `;

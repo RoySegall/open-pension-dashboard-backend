@@ -8,8 +8,10 @@ export default {
   users: () => getUser({conditions: {}}),
   user: (_, args) => getUser({id: args.id}),
 
-  me: () => {
+  // @ts-ignore
+  me: async (_, args, context) => {
+    const {user} = context;
     // Get the
-    return {"nameToPresent": "john"}
+    return user;
   }
 };

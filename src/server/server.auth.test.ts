@@ -1,10 +1,9 @@
 import { createToken, createUser, getUser } from '../db/user';
 
-import { getUserFromRequest } from './server';
+import * as server from './server'
+const { getUserFromRequest } = server;
 import {
-  createTestingServer,
-  refreshTokenQuery, revokeTokenQuery,
-  sendQuery,
+  createTestingServer, meQuery, refreshTokenQuery, revokeTokenQuery, sendQuery,
   tokenQuery
 } from './testingUtils';
 
@@ -130,7 +129,22 @@ describe('Auth', () => {
   });
 
   it('getUserFromRequest should be invoked when query the server', async () => {
-    expect(1).toBe(1);
+    const user = await createValidUser();
+
+    const spy = jest.spyOn(server, 'getUserFromRequest')
+      .mockImplementation(async () => {
+        return {user}
+      });
+    const {data: {me}} = await sendQuery(meQuery(), testingServer);
+    expect(spy).toHaveBeenCalled();
+
+    expect(me.id).toBe(String(user._id));
+    expect(me.username).toBe(user.username);
+    expect(me.email).toBe(user.email);
+    expect(me.nameToPresent).toBe(user.nameToPresent);
+    expect(me.profilePictureStorageId).toBe(user.profilePictureStorageId);
+
+    jest.resetAllMocks();
   });
 
   it('Should block requests when the token does not exists in the headers', async () => {
