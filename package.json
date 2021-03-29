@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "nodemon --watch '**/*.ts' --exec 'ts-node' src/index.ts",
     "sandbox": "nodemon --watch '**/*.ts' --exec 'ts-node' src/sandbox.ts",
+    "cli:createUser": "ts-node src/utils/cli.ts createUser",
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
@@ -54,6 +55,7 @@
     "apollo-server-testing": "^2.22.1",
     "bcrypt": "^5.0.1",
     "graphql": "^15.5.0",
+    "inquirer": "^8.0.0",
     "loadsh": "0.0.4",
     "mongoose": "^5.12.1",
     "pusher": "^5.0.0",
