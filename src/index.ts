@@ -1,10 +1,6 @@
-import { ApolloServer } from 'apollo-server';
-
-import { resolvers } from './server/resolvers';
-import { typeDefs } from './server/schema';
+import { server } from './server/server';
 import { getPort } from './utils/config';
 
-const server = new ApolloServer({ typeDefs, resolvers });
 
 // The `listen` method launches a web server.
 server.listen({port: getPort()}).then(({ url }) => {

@@ -7,7 +7,7 @@ import {
   createToken,
   createUser,
   getUser,
-  refreshToken,
+  refreshToken, revokeToken,
   updateUser
 } from '../../db/user';
 
@@ -74,7 +74,11 @@ export default {
   refreshToken: async (_, args) => {
     return await refreshToken(args.token, args.refreshToken);
   },
-  revokeToken: async () => {
+  revokeToken: async (_, args) => {
+    // todo: pull it from the context once the middelware will exists.
+    const {id} = args;
+    const user = await  getUser({id});
+    await revokeToken(user)
     return true;
   }
 }

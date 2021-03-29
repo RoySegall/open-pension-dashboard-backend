@@ -1,15 +1,9 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { gql } from 'apollo-server';
 import { createTestClient } from 'apollo-server-testing';
+import { server } from './server';
 
-import { resolvers } from './resolvers';
-import { typeDefs } from './schema';
 
 export const createTestingServer = () => {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers
-  });
-
   return createTestClient(server);
 }
 
@@ -137,4 +131,18 @@ export const refreshTokenQuery = ({token, refreshToken}) => gql`
     }
   }
 `
+
+export const revokeTokenQuery = ({id}) => gql`
+  mutation {
+    revokeToken(id: "${id}")
+  }
+`;
+
+export const meQuery = () => gql`
+  query {
+    me {
+      username
+    }
+  }
+`;
 

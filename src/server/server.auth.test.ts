@@ -1,8 +1,8 @@
 import { createToken, createUser, getUser } from '../db/user';
 
 import {
-  createTestingServer,
-  refreshTokenQuery,
+  createTestingServer, meQuery,
+  refreshTokenQuery, revokeTokenQuery,
   sendQuery,
   tokenQuery
 } from './testingUtils';
@@ -94,12 +94,30 @@ describe('Auth', () => {
     expect(refreshTokenResults.refreshToken).toBeNull();
   });
 
-  it('Should delete the token form the user object when revoking the token', () => {
-    expect(1).toBe(1);
+  it('Should delete the token from the user object when revoking the token', async () => {
+    const user = await createValidUser();
+    await createToken(user);
+    const id = String(user._id);
+
+    const {data: revokeTokenResults} = await sendQuery(revokeTokenQuery({id}), testingServer);
+    expect(revokeTokenResults.revokeToken).toBeTruthy();
+
+    const reloadedUser = await getUser({id});
+
+    expect(reloadedUser.token.token).toBeUndefined();
+    expect(reloadedUser.token.refreshToken).toBeUndefined();
+    expect(reloadedUser.token.expires).toBeUndefined();
   });
 
   it('Should return the current logged in user when query `me` and the token exists in the header', async () => {
-    expect(1).toBe(1);
+    const user = await createValidUser();
+    const token = await createToken(user);
+
+    console.log(token);
+
+    const {data} = await sendQuery(meQuery(), testingServer);
+
+    console.log(data);
   });
 
   it('Should not return the current logged in user when query `me` and the token does not exists in the header', async () => {

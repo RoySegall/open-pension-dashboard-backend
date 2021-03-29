@@ -46,6 +46,6 @@ export const typeDefs = gql`
     # Auth.
     tokenCreate(username: String, email: String, password: String): Token
     refreshToken(token: String, refreshToken: String): Token,
-    revokeToken: Boolean,
+    revokeToken(id: ID!): Boolean,
   }
 `;
