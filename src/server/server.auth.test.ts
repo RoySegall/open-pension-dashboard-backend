@@ -1,6 +1,6 @@
 import { createToken, createUser, getUser } from '../db/user';
-import { getUserFromRequest } from './server';
 
+import { getUserFromRequest } from './server';
 import {
   createTestingServer,
   refreshTokenQuery, revokeTokenQuery,
@@ -119,7 +119,14 @@ describe('Auth', () => {
   });
 
   it('getUserFromRequest: Should not return any user object when passing invalid/not existing token', async () => {
-    expect(1).toBe(1);
+    // Not passing anything.
+    expect(await getUserFromRequest({})).toStrictEqual({});
+
+    // Passing empty headers.
+    expect(await getUserFromRequest({headers: {}})).toStrictEqual({});
+
+    // Passing invalid token.
+    expect(await getUserFromRequest({headers: {authorization: 'not-exists-token'}})).toStrictEqual({});
   });
 
   it('getUserFromRequest should be invoked when query the server', async () => {

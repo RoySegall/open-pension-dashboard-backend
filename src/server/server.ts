@@ -13,6 +13,11 @@ export const getUserFromRequest = async (req) => {
   }
   const {token} = req.headers.authorization;
   const user = await loadUserByToken(token);
+
+  if (isEmpty(user)) {
+    return {};
+  }
+
   return {user};
 }
 
