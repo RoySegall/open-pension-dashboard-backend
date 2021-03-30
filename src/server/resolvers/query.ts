@@ -26,7 +26,7 @@ export default {
     assertLoggedIn(context);
 
     const {user} = context;
-    // Get the
+    // Get the user.
     return user;
   }
 };
